@@ -30,7 +30,7 @@ class Pedido(models.Model):
         ENCAMINHADO = 'Encaminhado', 'Encaminhado'
         FINALIZADO = 'Finalizado', 'Finalizado'
 
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE, db_column='id_cliente')
+    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT)
     data_pedido = models.DateTimeField()
     status = models.CharField(
         max_length=20,
@@ -49,7 +49,7 @@ class Pedido(models.Model):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
 
 class Envio(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, db_column='id_pedido')
+    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT)
     metodo_envio = models.CharField(max_length=50, null=False)
     custo_envio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     data_envio = models.DateTimeField()
@@ -71,12 +71,27 @@ class Envio(models.Model):
         return f"Envio #{self.id} - Pedido: {self.pedido.id}"
 
 class Categoria(models.Model):
-    nome = models.CharField(max_length=100)
+    nome = models.CharField(max_length=100, null=False)
     descricao = models.TextField()
 
     class Meta:
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
+
+    def __str__(self):
+        return self.nome
+
+class Fornecedor(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    nome_contato = models.CharField(max_length=100)
+    email_contato = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    endereco = models.CharField(max_length=255)
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=False)
+
+    class Meta:
+        verbose_name = 'Fornecedor'
+        verbose_name_plural = 'Fornecedores'
 
     def __str__(self):
         return self.nome

@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, ClienteSerializer, PedidoSerializer, EnvioSerializer, CategoriaSerializer
+from .serializers import UserSerializer, ClienteSerializer, PedidoSerializer, EnvioSerializer, CategoriaSerializer, FornecedorSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Cliente, Pedido, Envio, Categoria
+from .models import Cliente, Pedido, Envio, Categoria, Fornecedor
 
 class ClienteListCreate(generics.ListCreateAPIView):
     serializer_class = ClienteSerializer
@@ -92,6 +92,28 @@ class CategoriaDelete(generics.DestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return Categoria.objects.filter(author=user)
+
+class FornecedorListCreate(generics.ListCreateAPIView):
+    serializer_class = FornecedorSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Fornecedor.objects.filter(author=user)
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(author=self.request.user)
+        else:
+            print(serializer.errors)
+
+class FornecedorDelete(generics.DestroyAPIView):
+    serializer_class = FornecedorSerializer
+    permission_class = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Fornecedor.objects.filter(author=user)
 
 
 class CreateUserView(generics.CreateAPIView):
