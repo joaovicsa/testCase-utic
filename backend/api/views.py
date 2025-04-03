@@ -9,6 +9,14 @@ class ClienteListCreate(generics.ListCreateAPIView):
     serializer_class = ClienteSerializer
     permission_classes = [IsAuthenticated]
 
+class ClienteDelete(generics.DestroyAPIView):
+    serializer_class = ClienteSerializer
+    permission_class = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return Cliente.objects.filter(author=user)
+
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
