@@ -172,4 +172,4 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-backend/api/migrations/0001_initial.py
+backend/api/migrations/

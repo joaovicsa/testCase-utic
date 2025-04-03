@@ -7,4 +7,6 @@ urlpatterns = [
     path("clientes/delete/<int:pk>/", views.ClienteDelete.as_view(), name="delete-cliente"),
     path("pedido/", views.PedidoListCreate.as_view(), name="pedido-list"),
     path("pedido/delete/<int:pk>/", views.PedidoDelete.as_view(), name="delete-pedido"),
+    path("envio/", views.EnvioListCreate.as_view(), name="envio-list"),
+    path("envio/delete/<int:pk>/", views.EnvioDelete.as_view(), name="delete-envio"),
 ]
