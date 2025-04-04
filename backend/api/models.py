@@ -38,6 +38,22 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+class Fornecedor(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    nome_contato = models.CharField(max_length=100)
+    email_contato = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    endereco = models.CharField(max_length=255)
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=False)
+
+    class Meta:
+        db_table = 'fornecedores'
+        verbose_name = 'Fornecedor'
+        verbose_name_plural = 'Fornecedores'
+
+    def __str__(self):
+        return self.nome
+
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
         SOLICITADO = 'Solicitado', 'Solicitado'
@@ -84,17 +100,4 @@ class Envio(models.Model):
     def __str__(self):
         return f"Envio #{self.id} - Pedido: {self.pedido.id}"
 
-class Fornecedor(models.Model):
-    nome = models.CharField(max_length=100, null=False)
-    nome_contato = models.CharField(max_length=100)
-    email_contato = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=20)
-    endereco = models.CharField(max_length=255)
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=False)
 
-    class Meta:
-        verbose_name = 'Fornecedor'
-        verbose_name_plural = 'Fornecedores'
-
-    def __str__(self):
-        return self.nome
