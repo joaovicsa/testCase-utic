@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Cliente, Pedido, Envio, Categoria, Fornecedor
+from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,3 +40,9 @@ class FornecedorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Fornecedor
         fields = ["id", "nome_contato", "email_contato", "telefone", "endereco", "categoria"]
+
+class ProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = ["id", "nome", "descricao", "preco", "quantidade_estoque", "categoria", "fornecedor", "criado_em", "atualizado_em"]
+        extra_kwargs = {"criado_em": {"read_only": True}}
