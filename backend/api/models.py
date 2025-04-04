@@ -8,7 +8,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 class Cliente(models.Model):
     nome = models.CharField(max_length=100, null=False)
     email = models.CharField(max_length=100, null=False, unique=True)
-    senha = models.CharField(max_length=255, null=False)
     telefone = models.CharField(max_length=20, blank=True, null=True)
     endereco = models.CharField(max_length=255, blank=True, null=True)
     criado_em = models.DateTimeField(auto_now_add=True)
@@ -20,10 +19,7 @@ class Cliente(models.Model):
         verbose_name_plural = "Clientes"
 
     def __str__(self):
-        return f"{self.primeiro_nome} {self.ultimo_nome}"
-
-    def full_name(self):
-        return f"{self.primeiro_nome} {self.ultimo_nome}"
+        return self.nome
 
 
 class Categoria(models.Model):
@@ -97,7 +93,7 @@ class Pedido(models.Model):
         verbose_name_plural = 'Pedidos'
 
     def __str__(self):
-        return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
+        return f"Pedido #{self.id} - Cliente: {self.cliente.nome}"
 
     def update_valor_total(self):
         """Calculate and update the total value of the order based on its items"""
@@ -236,7 +232,7 @@ class Avaliacao(models.Model):
         unique_together = ['cliente', 'produto']
 
     def __str__(self):
-        return f"Avaliação de {self.cliente.full_name()} para {self.produto.nome}"
+        return f"Avaliação de {self.cliente.nome} para {self.produto.nome}"
 
     def clean(self):
         # Additional validation to ensure rating is between 1 and 5
