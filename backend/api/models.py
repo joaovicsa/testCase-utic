@@ -25,6 +25,19 @@ class Cliente(models.Model):
     def full_name(self):
         return f"{self.primeiro_nome} {self.ultimo_nome}"
 
+
+class Categoria(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    descricao = models.TextField()
+
+    class Meta:
+        db_table = 'categorias'
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorias'
+
+    def __str__(self):
+        return self.nome
+
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
         SOLICITADO = 'Solicitado', 'Solicitado'
@@ -70,17 +83,6 @@ class Envio(models.Model):
 
     def __str__(self):
         return f"Envio #{self.id} - Pedido: {self.pedido.id}"
-
-class Categoria(models.Model):
-    nome = models.CharField(max_length=100, null=False)
-    descricao = models.TextField()
-
-    class Meta:
-        verbose_name = 'Categoria'
-        verbose_name_plural = 'Categorias'
-
-    def __str__(self):
-        return self.nome
 
 class Fornecedor(models.Model):
     nome = models.CharField(max_length=100, null=False)
