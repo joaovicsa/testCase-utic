@@ -97,8 +97,18 @@ class Pedido(models.Model):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
 
 class Envio(models.Model):
-    pedido = models.ForeignKey(Pedido, on_delete=models.RESTRICT)
-    metodo_envio = models.CharField(max_length=50, null=False)
+    class MetodoEnvio(models.TextChoices):
+            TRANSPORTADORA = 'Transportadora', 'Transportadora'
+            CORREIOS = 'Correios', 'Correios'
+            RETIRADA = 'Retirada', 'Retirada'
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
+    metodo_envio = models.CharField(
+        max_length=20,
+        choices=MetodoEnvio.choices,
+        default=MetodoEnvio.TRANSPORTADORA,
+        null=False
+    )
     custo_envio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     data_envio = models.DateTimeField()
     data_entrega = models.DateTimeField()
