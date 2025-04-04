@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto, ItemPedido, MetodoPagamento
+from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto, ItemPedido, MetodoPagamento, Pagamento
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -67,3 +67,9 @@ class MetodoPagamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MetodoPagamento
         fields = ["id", "nome", "descricao"]
+
+
+class PagamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pagamento
+        fields = ['id', 'pedido', 'metodo_pagamento', 'valor', 'data_pagamento', 'status']

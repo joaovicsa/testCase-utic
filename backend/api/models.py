@@ -155,6 +155,32 @@ class MetodoPagamento(models.Model):
         return self.nome
 
 
+class Pagamento(models.Model):
+    class StatusPagamento(models.TextChoices):
+        PENDENTE = 'Pendente', 'Pendente'
+        APROVADO = 'Aprovado', 'Aprovado'
+        REJEITADO = 'Rejeitado', 'Rejeitado'
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
+    metodo_pagamento = models.ForeignKey(MetodoPagamento, on_delete=models.SET_DEFAULT, default=1, null=False)
+    data_pagamento = models.DateTimeField(auto_now_add=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    status = models.CharField(
+        max_length=20,
+        choices=StatusPagamento.choices,
+        default=StatusPagamento.PENDENTE,
+        null=False
+    )
+
+    class Meta:
+        db_table = 'pagamentos'
+        verbose_name = 'Pagamento'
+        verbose_name_plural = 'Pagamentos'
+
+    def __str__(self):
+        return f"Pagamento #{self.id} - Pedido: {self.pedido.id}"
+
+
 class Envio(models.Model):
     class MetodoEnvio(models.TextChoices):
             TRANSPORTADORA = 'Transportadora', 'Transportadora'
