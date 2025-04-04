@@ -15,6 +15,7 @@ class Cliente(models.Model):
     atualizado_em = models.DateTimeField(auto_now=True)
 
     class Meta:
+        db_table = 'clientes'
         verbose_name = "Cliente"
         verbose_name_plural = "Clientes"
 
@@ -24,13 +25,60 @@ class Cliente(models.Model):
     def full_name(self):
         return f"{self.primeiro_nome} {self.ultimo_nome}"
 
+
+class Categoria(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    descricao = models.TextField()
+
+    class Meta:
+        db_table = 'categorias'
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorias'
+
+    def __str__(self):
+        return self.nome
+
+class Fornecedor(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    nome_contato = models.CharField(max_length=100)
+    email_contato = models.CharField(max_length=100)
+    telefone = models.CharField(max_length=20)
+    endereco = models.CharField(max_length=255)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1 ,null=False)
+
+    class Meta:
+        db_table = 'fornecedores'
+        verbose_name = 'Fornecedor'
+        verbose_name_plural = 'Fornecedores'
+
+    def __str__(self):
+        return self.nome
+
+class Produto(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    descricao = models.TextField()
+    preco = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    quantidade_estoque = models.IntegerField(null=False)
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=True)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.RESTRICT, null=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'produtos'
+        verbose_name = 'Produto'
+        verbose_name_plural = 'Produtos'
+
+    def __str__(self):
+        return self.nome
+
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
         SOLICITADO = 'Solicitado', 'Solicitado'
         ENCAMINHADO = 'Encaminhado', 'Encaminhado'
         FINALIZADO = 'Finalizado', 'Finalizado'
 
-    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT)
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_DEFAULT, default=1)
     data_pedido = models.DateTimeField()
     status = models.CharField(
         max_length=20,
@@ -49,8 +97,20 @@ class Pedido(models.Model):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
 
 class Envio(models.Model):
+
+    class MetodoEnvio(models.TextChoices):
+            TRANSPORTADORA = 'Transportadora', 'Transportadora'
+            CORREIOS = 'Correios', 'Correios'
+            RETIRADA = 'Retirada', 'Retirada'
+
     pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
-    metodo_envio = models.CharField(max_length=50, null=False)
+    metodo_envio = models.CharField(
+        max_length=20,
+        choices=MetodoEnvio.choices,
+        default=MetodoEnvio.TRANSPORTADORA,
+        null=False
+    )
+
     custo_envio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     data_envio = models.DateTimeField()
     data_entrega = models.DateTimeField()
@@ -70,28 +130,4 @@ class Envio(models.Model):
     def __str__(self):
         return f"Envio #{self.id} - Pedido: {self.pedido.id}"
 
-class Categoria(models.Model):
-    nome = models.CharField(max_length=100, null=False)
-    descricao = models.TextField()
 
-    class Meta:
-        verbose_name = 'Categoria'
-        verbose_name_plural = 'Categorias'
-
-    def __str__(self):
-        return self.nome
-
-class Fornecedor(models.Model):
-    nome = models.CharField(max_length=100, null=False)
-    nome_contato = models.CharField(max_length=100)
-    email_contato = models.CharField(max_length=100)
-    telefone = models.CharField(max_length=20)
-    endereco = models.CharField(max_length=255)
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=False)
-
-    class Meta:
-        verbose_name = 'Fornecedor'
-        verbose_name_plural = 'Fornecedores'
-
-    def __str__(self):
-        return self.nome
