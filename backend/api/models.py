@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 
-# Create your models here.
 
 class Cliente(models.Model):
     primeiro_nome = models.CharField(max_length=50, null=False)
@@ -95,6 +94,39 @@ class Pedido(models.Model):
 
     def __str__(self):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
+
+    def update_valor_total(self):
+        """Calculate and update the total value of the order based on its items"""
+        total = sum(
+            item.quantidade * item.preco_unitario
+            for item in self.itempedido_set.all()
+        )
+        self.valor_total = total
+        self.save()
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
+    produto = models.ForeignKey(Produto, on_delete=models.SET_DEFAULT, default=1, null=False)
+    quantidade = models.IntegerField(null=False)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+
+    class Meta:
+        db_table = 'itens_pedido'
+        verbose_name = 'Item do Pedido '
+        verbose_name_plural = 'Itens do Pedido'
+
+    def __str__(self):
+        return f"Pedido #{self.pedido.id} - Item: {self.id}"
+
+    def save(self, *args, **kwargs):
+        # Set preco_unitario from produto.preco when creating the item
+        if not self.preco_unitario:
+            self.preco_unitario = self.produto.preco
+
+        super().save(*args, **kwargs)
+
+        # Update pedido valor_total
+        self.pedido.update_valor_total()
 
 class Envio(models.Model):
 
