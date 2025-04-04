@@ -6,8 +6,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Cliente(models.Model):
-    primeiro_nome = models.CharField(max_length=50, null=False)
-    ultimo_nome = models.CharField(max_length=50, null=False)
+    nome = models.CharField(max_length=100, null=False)
     email = models.CharField(max_length=100, null=False, unique=True)
     senha = models.CharField(max_length=255, null=False)
     telefone = models.CharField(max_length=20, blank=True, null=True)
