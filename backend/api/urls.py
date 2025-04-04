@@ -21,4 +21,6 @@ urlpatterns = [
     path("metodo_pagamento/delete/<int:pk>/", views.MetodoPagamentoDelete.as_view(), name="delete-metodo_pagamento"),
     path("pagamento/", views.PagamentoListCreate.as_view(), name="pagamento-list"),
     path("pagamento/delete/<int:pk>/", views.PagamentoDelete.as_view(), name="delete-pagamento"),
+    path("avaliacao/", views.AvaliacaoListCreate.as_view(), name="avaliacao-list"),
+    path("avaliacao/delete/<int:pk>/", views.AvaliacaoDelete.as_view(), name="delete-avaliacao"),
 ]

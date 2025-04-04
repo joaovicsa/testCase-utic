@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto, ItemPedido, MetodoPagamento, Pagamento
+from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto, ItemPedido, MetodoPagamento, Pagamento, Avaliacao
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -73,3 +73,10 @@ class PagamentoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pagamento
         fields = ['id', 'pedido', 'metodo_pagamento', 'valor', 'data_pagamento', 'status']
+
+
+class AvaliacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Avaliacao
+        fields = ['id', 'produto', 'cliente', 'avaliacao', 'comentario', 'data_avaliacao']
+        extra_kwargs = {"data_avaliacao": {"read_only": True}}
