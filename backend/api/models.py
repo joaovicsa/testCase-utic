@@ -116,7 +116,7 @@ class ItemPedido(models.Model):
         verbose_name_plural = 'Itens do Pedido'
 
     def __str__(self):
-        return f"Pedido #{self.pedido.id} - Item: {self.id}"
+        return f"Pedido: ({self.pedido.id}) -> Item #{self.id} - Produto: {self.produto.nome} - Quantidade: {self.quantidade}"
 
     def save(self, *args, **kwargs):
         # Set preco_unitario from produto.preco when creating the item

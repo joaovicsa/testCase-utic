@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from rest_framework import generics
-from .serializers import UserSerializer, ClienteSerializer, PedidoSerializer, EnvioSerializer, CategoriaSerializer, FornecedorSerializer, ProdutoSerializer
+from .serializers import UserSerializer, ClienteSerializer, PedidoSerializer, EnvioSerializer, CategoriaSerializer, FornecedorSerializer, ProdutoSerializer, ItemPedidoSerializer
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto
+from .models import Cliente, Pedido, Envio, Categoria, Fornecedor, Produto, ItemPedido
 
 class ClienteListCreate(generics.ListCreateAPIView):
     serializer_class = ClienteSerializer
@@ -136,6 +136,28 @@ class ProdutoDelete(generics.DestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return Produto.objects.filter(author=user)
+
+class ItemPedidoListCreate(generics.ListCreateAPIView):
+    serializer_class = ItemPedidoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return ItemPedido.objects.filter(author=user)
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save(author=self.request.user)
+        else:
+            print(serializer.errors)
+
+class ItemPedidoDelete(generics.DestroyAPIView):
+    serializer_class = ItemPedidoSerializer
+    permission_class = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return ItemPedido.objects.filter(author=user)
 
 
 class CreateUserView(generics.CreateAPIView):
