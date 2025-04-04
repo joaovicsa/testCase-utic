@@ -15,7 +15,8 @@ urlpatterns = [
     path("fornecedor/delete/<int:pk>/", views.FornecedorDelete.as_view(), name="delete-fornecedor"),
     path("produto/", views.ProdutoListCreate.as_view(), name="produto-list"),
     path("produto/delete/<int:pk>/", views.ProdutoDelete.as_view(), name="delete-produto"),
-    path("item_pedido/", views.ProdutoListCreate.as_view(), name="item_pedido-list"),
-    path("item_pedido/delete/<int:pk>/", views.ProdutoDelete.as_view(), name="delete-item_pedido"),
-
+    path("item_pedido/", views.ItemPedidoListCreate.as_view(), name="item_pedido-list"),
+    path("item_pedido/delete/<int:pk>/", views.ItemPedidoDelete.as_view(), name="delete-item_pedido"),
+    path("metodo_pagamento/", views.MetodoPagamentoListCreate.as_view(), name="metodo_pagamento-list"),
+    path("metodo_pagamento/delete/<int:pk>/", views.MetodoPagamentoDelete.as_view(), name="delete-metodo_pagamento"),
 ]

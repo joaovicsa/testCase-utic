@@ -37,6 +37,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Fornecedor(models.Model):
     nome = models.CharField(max_length=100, null=False)
     nome_contato = models.CharField(max_length=100)
@@ -52,6 +53,7 @@ class Fornecedor(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Produto(models.Model):
     nome = models.CharField(max_length=100, null=False)
@@ -70,6 +72,7 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
@@ -104,6 +107,7 @@ class Pedido(models.Model):
         self.valor_total = total
         self.save()
 
+
 class ItemPedido(models.Model):
     pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
     produto = models.ForeignKey(Produto, on_delete=models.SET_DEFAULT, default=1, null=False)
@@ -128,8 +132,30 @@ class ItemPedido(models.Model):
         # Update pedido valor_total
         self.pedido.update_valor_total()
 
-class Envio(models.Model):
 
+class MetodoPagamento(models.Model):
+    class Metodo(models.TextChoices):
+            CREDITO = 'Crédito', 'Crédito'
+            PAYPAL = 'Paypal', 'Paypal'
+            BOLETO = 'Boleto', 'Boleto'
+
+    nome = models.CharField(
+        max_length=50,
+        choices=Metodo.choices,
+        default=Metodo.CREDITO
+    )
+    descricao = models.TextField()
+
+    class Meta:
+        db_table = 'metodos_pagamento'
+        verbose_name = 'Método de Pagamento'
+        verbose_name_plural = 'Métodos de Pagamento'
+
+    def __str__(self):
+        return self.nome
+
+
+class Envio(models.Model):
     class MetodoEnvio(models.TextChoices):
             TRANSPORTADORA = 'Transportadora', 'Transportadora'
             CORREIOS = 'Correios', 'Correios'
