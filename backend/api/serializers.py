@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
 class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
-        fields = ["id", "nome", "email", "senha", "telefone", "endereco", "criado_em", "atualizado_em"]
+        fields = ["id", "nome", "email", "telefone", "endereco", "criado_em", "atualizado_em"]
         extra_kwargs = {"criado_em": {"read_only": True}}
 
 
