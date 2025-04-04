@@ -97,6 +97,7 @@ class Pedido(models.Model):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
 
 class Envio(models.Model):
+
     class MetodoEnvio(models.TextChoices):
             TRANSPORTADORA = 'Transportadora', 'Transportadora'
             CORREIOS = 'Correios', 'Correios'
@@ -109,6 +110,7 @@ class Envio(models.Model):
         default=MetodoEnvio.TRANSPORTADORA,
         null=False
     )
+
     custo_envio = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     data_envio = models.DateTimeField()
     data_entrega = models.DateTimeField()
