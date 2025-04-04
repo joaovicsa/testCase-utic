@@ -2,7 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.crypto import get_random_string
 
-# Create your models here.
 
 class Cliente(models.Model):
     primeiro_nome = models.CharField(max_length=50, null=False)
@@ -38,6 +37,7 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Fornecedor(models.Model):
     nome = models.CharField(max_length=100, null=False)
     nome_contato = models.CharField(max_length=100)
@@ -53,6 +53,7 @@ class Fornecedor(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Produto(models.Model):
     nome = models.CharField(max_length=100, null=False)
@@ -71,6 +72,7 @@ class Produto(models.Model):
 
     def __str__(self):
         return self.nome
+
 
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
@@ -96,8 +98,90 @@ class Pedido(models.Model):
     def __str__(self):
         return f"Pedido #{self.id} - Cliente: {self.cliente.full_name()}"
 
-class Envio(models.Model):
+    def update_valor_total(self):
+        """Calculate and update the total value of the order based on its items"""
+        total = sum(
+            item.quantidade * item.preco_unitario
+            for item in self.itempedido_set.all()
+        )
+        self.valor_total = total
+        self.save()
 
+
+class ItemPedido(models.Model):
+    pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
+    produto = models.ForeignKey(Produto, on_delete=models.SET_DEFAULT, default=1, null=False)
+    quantidade = models.IntegerField(null=False)
+    preco_unitario = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+
+    class Meta:
+        db_table = 'itens_pedido'
+        verbose_name = 'Item do Pedido '
+        verbose_name_plural = 'Itens do Pedido'
+
+    def __str__(self):
+        return f"Pedido: ({self.pedido.id}) -> Item #{self.id} - Produto: {self.produto.nome} - Quantidade: {self.quantidade}"
+
+    def save(self, *args, **kwargs):
+        # Set preco_unitario from produto.preco when creating the item
+        if not self.preco_unitario:
+            self.preco_unitario = self.produto.preco
+
+        super().save(*args, **kwargs)
+
+        # Update pedido valor_total
+        self.pedido.update_valor_total()
+
+
+class MetodoPagamento(models.Model):
+    class Metodo(models.TextChoices):
+            CREDITO = 'Crédito', 'Crédito'
+            PAYPAL = 'Paypal', 'Paypal'
+            BOLETO = 'Boleto', 'Boleto'
+
+    nome = models.CharField(
+        max_length=50,
+        choices=Metodo.choices,
+        default=Metodo.CREDITO
+    )
+    descricao = models.TextField()
+
+    class Meta:
+        db_table = 'metodos_pagamento'
+        verbose_name = 'Método de Pagamento'
+        verbose_name_plural = 'Métodos de Pagamento'
+
+    def __str__(self):
+        return self.nome
+
+
+class Pagamento(models.Model):
+    class StatusPagamento(models.TextChoices):
+        PENDENTE = 'Pendente', 'Pendente'
+        APROVADO = 'Aprovado', 'Aprovado'
+        REJEITADO = 'Rejeitado', 'Rejeitado'
+
+    pedido = models.ForeignKey(Pedido, on_delete=models.SET_DEFAULT, default=1, null=False)
+    metodo_pagamento = models.ForeignKey(MetodoPagamento, on_delete=models.SET_DEFAULT, default=1, null=False)
+    data_pagamento = models.DateTimeField(auto_now_add=True)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    status = models.CharField(
+        max_length=20,
+        choices=StatusPagamento.choices,
+        default=StatusPagamento.PENDENTE,
+        null=False
+    )
+
+    class Meta:
+        db_table = 'pagamentos'
+        verbose_name = 'Pagamento'
+        verbose_name_plural = 'Pagamentos'
+
+    def __str__(self):
+        return f"Pagamento #{self.id} - Pedido: {self.pedido.id}"
+
+
+class Envio(models.Model):
     class MetodoEnvio(models.TextChoices):
             TRANSPORTADORA = 'Transportadora', 'Transportadora'
             CORREIOS = 'Correios', 'Correios'
