@@ -44,7 +44,7 @@ class Fornecedor(models.Model):
     email_contato = models.CharField(max_length=100)
     telefone = models.CharField(max_length=20)
     endereco = models.CharField(max_length=255)
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=False)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1 ,null=False)
 
     class Meta:
         db_table = 'fornecedores'
@@ -59,8 +59,8 @@ class Produto(models.Model):
     descricao = models.TextField()
     preco = models.DecimalField(max_digits=10, decimal_places=2, null=False)
     quantidade_estoque = models.IntegerField(null=False)
-    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)
-    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.RESTRICT)
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT, null=True)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.RESTRICT, null=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
 
@@ -78,7 +78,7 @@ class Pedido(models.Model):
         ENCAMINHADO = 'Encaminhado', 'Encaminhado'
         FINALIZADO = 'Finalizado', 'Finalizado'
 
-    cliente = models.ForeignKey(Cliente, on_delete=models.RESTRICT)
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_DEFAULT, default=1)
     data_pedido = models.DateTimeField()
     status = models.CharField(
         max_length=20,
