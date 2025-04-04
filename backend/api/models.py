@@ -54,6 +54,24 @@ class Fornecedor(models.Model):
     def __str__(self):
         return self.nome
 
+class Produto(models.Model):
+    nome = models.CharField(max_length=100, null=False)
+    descricao = models.TextField()
+    preco = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    quantidade_estoque = models.IntegerField(null=False)
+    categoria = models.ForeignKey(Categoria, on_delete=models.RESTRICT)
+    fornecedor = models.ForeignKey(Fornecedor, on_delete=models.RESTRICT)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'produtos'
+        verbose_name = 'Produto'
+        verbose_name_plural = 'Produtos'
+
+    def __str__(self):
+        return self.nome
+
 class Pedido(models.Model):
     class StatusPedido(models.TextChoices):
         SOLICITADO = 'Solicitado', 'Solicitado'

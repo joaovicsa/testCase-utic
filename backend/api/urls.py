@@ -13,4 +13,6 @@ urlpatterns = [
     path("categoria/delete/<int:pk>/", views.CategoriaDelete.as_view(), name="delete-categoria"),
     path("fornecedor/", views.FornecedorListCreate.as_view(), name="envio-list"),
     path("fornecedor/delete/<int:pk>/", views.FornecedorDelete.as_view(), name="delete-fornecedor"),
+    path("produto/", views.ProdutoListCreate.as_view(), name="envio-list"),
+    path("produto/delete/<int:pk>/", views.ProdutoDelete.as_view(), name="delete-produto"),
 ]
